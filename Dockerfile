@@ -8,5 +8,5 @@ COPY package.json $WORKDIR
 RUN npm install
 
 # Install project
-COPY aws-config.json worker.js $WORKDIR
-CMD node worker.js
+COPY api-hour-worker.js $WORKDIR
+CMD node api-hour-worker.js
