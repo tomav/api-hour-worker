@@ -32,7 +32,7 @@ function initServer () {
   console.log('-- Starting worker in "' + process.env.LOCATION + '" location')
   console.log('-- Using queue ' + process.env.QUEUE_URL)
   if (process.env.MODE === 'local') {
-    console.log('-- Using Local development mode (local DynamoDB endpoint)')
+    console.log('-- Using Local development mode (local database endpoint)')
   };
   var params = {
     AttributeNames: [
@@ -51,6 +51,7 @@ function initServer () {
 
 /*
  * Stop process and display error message
+ * param 'message' Message to display
  */
 
 function die (message) {
@@ -91,12 +92,10 @@ function getNextMessage (params) {
  * param "options" (object) configuration containing 'method' and 'url'
  * param "MessageId" (uuid) Message UUID
  * param "ReceiptHandle"
- * returns object
  */
 
 function apiMonitor (monitorId, options, MessageId, ReceiptHandle) {
   options = Object.assign(options, { time: true })
-  console.log(options)
   request(
     options, function (error, response, body) {
       if (error) { /* TODO */ };
@@ -108,10 +107,13 @@ function apiMonitor (monitorId, options, MessageId, ReceiptHandle) {
 
 /*
  * Post apiMonitor result to backend
+ * param "monitorId" (integer) Id of the tested monitor entry
  * param "result" (object) result for apiMonitor
+ * param "MessageId" (uuid) Message UUID
+ * param "ReceiptHandle"
  */
 
-function postResult (monitorId, result, ReceiptHandle, MessageId) {
+function postResult (monitorId, result, MessageId, ReceiptHandle) {
   console.log('> Posting data to database')
 
   var table = 'Pings'
@@ -138,11 +140,11 @@ function postResult (monitorId, result, ReceiptHandle, MessageId) {
 
 /*
  * Delete message in the queue
- * param "ReceiptHandle" (object) Message Handle
  * param "MessageId" (string) Message Id
+ * param "ReceiptHandle" (object) Message Handle
  */
 
-function deleteMessage (ReceiptHandle, MessageId) {
+function deleteMessage (MessageId, ReceiptHandle) {
   var deleteParams = {
     QueueUrl: process.env.QUEUE_URL,
     ReceiptHandle: ReceiptHandle
@@ -152,28 +154,6 @@ function deleteMessage (ReceiptHandle, MessageId) {
       console.log('Delete Error', err)
     } else {
       console.log('> Deleted message', MessageId)
-    }
-  })
-}
-
-/*
- * Send a new dummy message in the queue
- * param params (object) provided by initServer()
- */
-
-function sendDummyMessage () {
-  var string = JSON.stringify({ monitorId: 1, url: 'http://www.google.fr', method: 'GET' })
-  var params = {
-    DelaySeconds: 10,
-    MessageBody: string,
-    QueueUrl: process.env.QUEUE_URL
-  }
-
-  sqs.sendMessage(params, function (err, data) {
-    if (err) {
-      console.log('Error', err)
-    } else {
-      console.log('> Message sent', data.MessageId)
     }
   })
 }
