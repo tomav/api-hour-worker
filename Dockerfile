@@ -8,5 +8,5 @@ COPY package.json $WORKDIR
 RUN npm install
 
 # Install project
-COPY api-hour-worker.js $WORKDIR
+COPY api-hour-worker.js api-hour-send-dummy-message.js $WORKDIR
 CMD node api-hour-worker.js
