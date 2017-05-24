@@ -1,4 +1,3 @@
-require('dotenv').config()
 require('console-stamp')(console, 'HH:MM:ss.l')
 
 var request = require('request')
