@@ -21,7 +21,7 @@ var sqs = new AWS.SQS({apiVersion: '2012-11-05'})
  */
 
 function sendDummyMessage () {
-  var string = JSON.stringify(process.argv[2])
+  var string = process.argv[2]
   var params = {
     DelaySeconds: 10,
     MessageBody: string,

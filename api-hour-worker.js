@@ -77,9 +77,8 @@ function getNextMessage (params) {
 
         var json = JSON.parse(data.Messages[0].Body)
         var monitorId = json['monitorId']
-        var url = json['url']
-        var method = json['method']
-        apiMonitor(monitorId, {url: url, method: method}, MessageId, ReceiptHandle)
+        var config = json['config']
+        apiMonitor(monitorId, config, MessageId, ReceiptHandle)
       }
       getNextMessage(params)
     }
@@ -116,7 +115,7 @@ function apiMonitor (monitorId, options, MessageId, ReceiptHandle) {
 function postResult (monitorId, result, MessageId, ReceiptHandle) {
   console.log('> Posting data to database')
 
-  var table = 'Pings'
+  var table = 'api_hour_pings'
   var timestampCountry = result['timestamp'] + '-' + result['location']
 
   var params = {
