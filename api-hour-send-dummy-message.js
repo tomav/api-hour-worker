@@ -1,5 +1,10 @@
 require('console-stamp')(console, 'HH:MM:ss.l')
 
+if (!process.argv[2]) {
+  console.log("Object parameter is required")
+  process.exit(1)
+};
+
 var request = require('request')
 var AWS = require('aws-sdk')
 
@@ -16,7 +21,7 @@ var sqs = new AWS.SQS({apiVersion: '2012-11-05'})
  */
 
 function sendDummyMessage () {
-  var string = JSON.stringify({ monitorId: 1, url: 'http://www.google.fr', method: 'GET' })
+  var string = JSON.stringify(process.argv[2])
   var params = {
     DelaySeconds: 10,
     MessageBody: string,
@@ -33,3 +38,4 @@ function sendDummyMessage () {
 }
 
 sendDummyMessage()
+
