@@ -97,9 +97,12 @@ function apiMonitor (monitorId, options, MessageId, ReceiptHandle) {
   options = Object.assign(options, { time: true })
   request(
     options, function (error, response, body) {
-      if (error) { /* TODO */ };
-      var json = { timestamp: getDateInMS(), location: process.env.LOCATION, MessageId: MessageId, statusCode: response.statusCode, timingPhases: response.timingPhases }
-      postResult(monitorId, json, ReceiptHandle, MessageId)
+      if (!error) {
+        var json = { timestamp: getDateInMS(), location: process.env.LOCATION, MessageId: MessageId, statusCode: response.statusCode, timingPhases: response.timingPhases }
+        postResult(monitorId, json, ReceiptHandle, MessageId)
+      } else {
+        console.log('Error', err)
+      }
     }
   )
 }
